@@ -1,0 +1,22 @@
+[Unit]
+Description=Dialogue with Future Entrepreneurs API (FastAPI)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/dialogue-futures/backend
+EnvironmentFile=/var/www/dialogue-futures/backend/.env
+ExecStart=/var/www/dialogue-futures/backend/.venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 --port 8071 --workers 2 --proxy-headers
+Restart=always
+RestartSec=5
+
+# hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

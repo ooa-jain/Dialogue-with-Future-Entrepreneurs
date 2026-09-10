@@ -1,0 +1,412 @@
+{
+ "self": [
+  [
+   "Sustainability & Green Living",
+   [
+    "eco friendly",
+    "eco-friendly",
+    "environment friendly",
+    "environmentally friendly",
+    "green living",
+    "green lifestyle",
+    "sustainable lifestyle",
+    "planet friendly",
+    "nature friendly",
+    "green future",
+    "carbon footprint",
+    "low carbon"
+   ]
+  ],
+  [
+   "Environmental Responsibility",
+   [
+    "protect nature",
+    "protecting nature",
+    "protect environment",
+    "protecting environment",
+    "save nature",
+    "care for nature",
+    "nature conservation",
+    "environmental protection",
+    "ecological responsibility"
+   ]
+  ],
+  [
+   "Sustainable Entrepreneurship",
+   [
+    "green business",
+    "eco business",
+    "eco entrepreneurship",
+    "sustainable business",
+    "environment friendly business",
+    "green entrepreneurship"
+   ]
+  ],
+  [
+   "Health & Wellness",
+   [
+    "healthy life",
+    "healthy lifestyle",
+    "physical health",
+    "mental health",
+    "fitness",
+    "wellness",
+    "well being",
+    "wellbeing"
+   ]
+  ],
+  [
+   "Financial Independence",
+   [
+    "financial freedom",
+    "independent income",
+    "independent financially",
+    "earn independently"
+   ]
+  ],
+  [
+   "Career Growth & Advancement",
+   [
+    "grow in my career",
+    "career progression",
+    "professional growth",
+    "grow professionally",
+    "career success"
+   ]
+  ],
+  [
+   "Continuous Learning & Lifelong Learning",
+   [
+    "keep learning",
+    "learn new things",
+    "lifelong learning",
+    "continuous learning",
+    "always learning"
+   ]
+  ],
+  [
+   "Personal Growth & Self-Development",
+   [
+    "become a better person",
+    "personal improvement",
+    "improve myself",
+    "self growth",
+    "grow as a person"
+   ]
+  ],
+  [
+   "Social Impact",
+   [
+    "make a difference",
+    "help society",
+    "positive difference",
+    "benefit society",
+    "serve society"
+   ]
+  ],
+  [
+   "Community Engagement",
+   [
+    "help my community",
+    "support my community",
+    "community service",
+    "serve the community"
+   ]
+  ],
+  [
+   "Women Empowerment",
+   [
+    "empower women",
+    "support women",
+    "women empowerment",
+    "women entrepreneurs"
+   ]
+  ],
+  [
+   "Youth Development",
+   [
+    "help young people",
+    "support youth",
+    "youth development",
+    "young generation"
+   ]
+  ],
+  [
+   "Global Exposure",
+   [
+    "global exposure",
+    "international exposure",
+    "work with people from different countries"
+   ]
+  ]
+ ],
+ "india": [
+  [
+   "Environmental Sustainability",
+   [
+    "eco friendly",
+    "eco-friendly",
+    "environment friendly",
+    "environmentally friendly",
+    "green future",
+    "green development",
+    "protect environment",
+    "protect nature",
+    "save nature",
+    "sustainable future",
+    "nature friendly",
+    "planet friendly",
+    "environment protection",
+    "ecological balance"
+   ]
+  ],
+  [
+   "Climate Action",
+   [
+    "climate friendly",
+    "climate change",
+    "global warming",
+    "carbon emissions",
+    "reduce carbon",
+    "net zero",
+    "climate resilience"
+   ]
+  ],
+  [
+   "Renewable Energy",
+   [
+    "solar power",
+    "solar energy",
+    "wind power",
+    "wind energy",
+    "renewable energy",
+    "clean energy"
+   ]
+  ],
+  [
+   "Waste Management",
+   [
+    "reduce waste",
+    "waste reduction",
+    "recycle",
+    "recycling",
+    "plastic waste",
+    "plastic pollution",
+    "zero waste",
+    "waste segregation",
+    "composting"
+   ]
+  ],
+  [
+   "Pollution Reduction",
+   [
+    "reduce pollution",
+    "clean air",
+    "clean water",
+    "air pollution",
+    "water pollution",
+    "pollution free"
+   ]
+  ],
+  [
+   "Biodiversity & Conservation",
+   [
+    "protect wildlife",
+    "protect forests",
+    "forest conservation",
+    "biodiversity",
+    "ecosystem",
+    "nature conservation"
+   ]
+  ],
+  [
+   "Water Security",
+   [
+    "save water",
+    "water conservation",
+    "water scarcity",
+    "water security",
+    "clean water",
+    "water management"
+   ]
+  ],
+  [
+   "Green Economy",
+   [
+    "green economy",
+    "green jobs",
+    "green growth",
+    "circular economy",
+    "low carbon economy"
+   ]
+  ],
+  [
+   "Education Transformation",
+   [
+    "transform education",
+    "improve education",
+    "better education system",
+    "education reform"
+   ]
+  ],
+  [
+   "Quality & Accessible Education",
+   [
+    "education for everyone",
+    "education for all",
+    "equal access to education",
+    "affordable education"
+   ]
+  ],
+  [
+   "Employment & Job Creation",
+   [
+    "create jobs",
+    "more jobs",
+    "job opportunities",
+    "employment opportunities",
+    "reduce unemployment"
+   ]
+  ],
+  [
+   "Youth Empowerment",
+   [
+    "empower youth",
+    "young people empowerment",
+    "support young people"
+   ]
+  ],
+  [
+   "Women Empowerment",
+   [
+    "empower women",
+    "support women",
+    "women empowerment",
+    "women employment"
+   ]
+  ],
+  [
+   "Poverty Reduction",
+   [
+    "reduce poverty",
+    "eradicate poverty",
+    "poverty free",
+    "end poverty"
+   ]
+  ],
+  [
+   "Good Governance",
+   [
+    "better governance",
+    "good government",
+    "effective government",
+    "governance reform"
+   ]
+  ],
+  [
+   "National Unity",
+   [
+    "unity in india",
+    "united india",
+    "national unity",
+    "together as a nation"
+   ]
+  ],
+  [
+   "Peace & Social Harmony",
+   [
+    "social harmony",
+    "communal harmony",
+    "peaceful society",
+    "peace and harmony"
+   ]
+  ],
+  [
+   "Healthcare Technology",
+   [
+    "digital health",
+    "telemedicine",
+    "health technology",
+    "healthcare technology"
+   ]
+  ],
+  [
+   "Universal Healthcare",
+   [
+    "healthcare for everyone",
+    "healthcare for all",
+    "universal healthcare"
+   ]
+  ],
+  [
+   "Rural Development",
+   [
+    "develop villages",
+    "rural india",
+    "village development",
+    "rural development"
+   ]
+  ],
+  [
+   "Agricultural Transformation",
+   [
+    "modern farming",
+    "modern agriculture",
+    "agricultural transformation",
+    "smart farming"
+   ]
+  ],
+  [
+   "Technology-led Development",
+   [
+    "technology driven development",
+    "technology-led development",
+    "technology for development"
+   ]
+  ],
+  [
+   "Digital India",
+   [
+    "digital india",
+    "digital society",
+    "digitally advanced india"
+   ]
+  ],
+  [
+   "Innovation Ecosystem",
+   [
+    "innovation hub",
+    "innovation ecosystem",
+    "culture of innovation",
+    "foster innovation"
+   ]
+  ],
+  [
+   "India as a Developed Nation",
+   [
+    "developed india",
+    "developed nation",
+    "developed country",
+    "viksit bharat"
+   ]
+  ],
+  [
+   "India as a Global Economic Power",
+   [
+    "economic superpower",
+    "global economic power",
+    "strong global economy",
+    "world economic power"
+   ]
+  ],
+  [
+   "Global Leadership",
+   [
+    "global leader",
+    "world leader",
+    "global leadership",
+    "lead the world"
+   ]
+  ]
+ ]
+}
