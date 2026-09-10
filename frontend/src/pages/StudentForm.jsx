@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { emailLooksWrong, required, useWizard } from '../lib/wizard'
 import { ConfirmMark, Cover } from '../components/Cover'
@@ -82,7 +81,18 @@ export default function StudentForm() {
     if (w.restored) setStarted(true)
   }, [w.restored])
 
-  if (w.status === 'done') return <Confirmation data={w.data} onRestart={w.reset} />
+  if (w.status === 'done') {
+    return (
+      <Confirmation
+        data={w.data}
+        onRestart={w.reset}
+        onStart={() => {
+          w.reset()
+          setStarted(false)
+        }}
+      />
+    )
+  }
 
   if (!started) {
     return (
@@ -349,7 +359,7 @@ function persona(text) {
     }
 }
 
-function Confirmation({ data, onRestart }) {
+function Confirmation({ data, onRestart, onStart }) {
   const p = persona(`${data.vision_self} ${data.vision_india}`)
   return (
     <Cover variant="back" audience="student" rings>
@@ -372,7 +382,7 @@ function Confirmation({ data, onRestart }) {
 
       <div className="cover-links">
         <button className="btn-outline" type="button" onClick={onRestart}>Share Another Response</button>
-        <Link className="btn-outline" to="/">Back to home</Link>
+        <button className="btn-outline" type="button" onClick={onStart}>Back to student dialogue</button>
       </div>
     </Cover>
   )

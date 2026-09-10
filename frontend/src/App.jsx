@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { api, getToken } from './lib/api'
-import Landing from './pages/Landing'
 import StudentForm from './pages/StudentForm'
 import FacultyForm from './pages/FacultyForm'
 import AdminLogin from './pages/AdminLogin'
@@ -55,7 +54,6 @@ function NotFound() {
       <h2 className="confirm-title">Page not found</h2>
       <p className="confirm-sub">The link you followed does not exist on this site.</p>
       <div className="cover-links">
-        <Link className="btn-outline" to="/">Home</Link>
         <Link className="btn-outline" to="/student">Student dialogue</Link>
         <Link className="btn-outline" to="/faculty">Faculty dialogue</Link>
       </div>
@@ -66,7 +64,8 @@ function NotFound() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      {/* There is no home page: /student and /faculty are the links that get shared. */}
+      <Route path="/" element={<Navigate to="/student" replace />} />
       <Route path="/student" element={<StudentForm />} />
       <Route path="/faculty" element={<FacultyForm />} />
       <Route path="/admin" element={<AdminGate />} />

@@ -63,7 +63,8 @@ export default function AdminLogin({ onAuthed }) {
       </form>
 
       <div className="cover-links">
-        <Link className="btn-outline" to="/">← Back to the public site</Link>
+        <Link className="btn-outline" to="/student">Student dialogue</Link>
+        <Link className="btn-outline" to="/faculty">Faculty dialogue</Link>
       </div>
     </Cover>
   )

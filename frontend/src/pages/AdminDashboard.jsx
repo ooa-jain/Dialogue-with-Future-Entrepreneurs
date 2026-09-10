@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { api, setToken } from '../lib/api'
 import { useToast } from '../lib/hooks'
 import {
-  Alert, BarChart, ChartCard, Empty, MindsetBlock, Pie, PIE_PALETTE, SectionKicker,
-  Spinner, ThemeList, Toast, TopBrand,
+  Alert, BarChart, ChartCard, ColumnChart, Empty, MindsetBlock, Pie, SectionKicker,
+  Spinner, StatTile, ThemeList, Toast, TopBrand, WaveChart, WaveRule,
 } from '../components/ui'
 import ResponseExplorer from '../components/ResponseExplorer'
 import Logo from '../components/Logo'
@@ -13,10 +13,12 @@ const VIEWS = [
   { key: 'student', label: 'Student' },
 ]
 
-const RESEARCH_PALETTE = [
-  '#16305F', '#D89A1F', '#2C6B36', '#7A4EAB', '#C05A2B',
-  '#2F7F8F', '#8A6A3D', '#5C6472', '#A14C72',
-]
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function prettyDate(iso) {
+  const [y, m, d] = String(iso || '').split('-').map(Number)
+  return y && m && d ? `${d} ${MONTHS[m - 1]} ${y}` : '—'
+}
 
 export default function AdminDashboard({ username, onSignOut }) {
   const [view, setView] = useState(() => {
@@ -84,8 +86,16 @@ export default function AdminDashboard({ username, onSignOut }) {
 
   const label = view === 'faculty' ? 'Faculty' : 'Student'
 
+  // Section numbers are derived, so a hidden section never leaves a gap.
+  const order = ['OVERVIEW', 'PARTICIPATION', 'WHO RESPONDED', 'DEPTH & VOICE']
+  if (view === 'faculty' && data?.research) order.push('RESEARCH')
+  order.push('THEMES', 'BY DEPARTMENT')
+  if (view === 'student' && data?.level_themes) order.push('BY LEVEL')
+  order.push('RESPONSES', 'SUMMARY')
+  const num = (name) => `${String(order.indexOf(name) + 1).padStart(2, '0')} · ${name}`
+
   return (
-    <div>
+    <div className="sheet dash-sheet">
       <a className="skip-link" href="#dash-main">Skip to the dashboard</a>
 
       <header className="dash-bar">
@@ -123,8 +133,10 @@ export default function AdminDashboard({ username, onSignOut }) {
       <main className="wrap" id="dash-main">
         <div className="dash-head">
           <div>
-            <div className="eyebrow">Dialogue with Future Entrepreneurs</div>
-            <h1>{label} Response Insights</h1>
+            <span className="tag-mono">Dialogue with Future Entrepreneurs</span>
+            <h1>
+              {label} <mark>Response</mark> Insights
+            </h1>
             <div className="dash-sub">
               {data
                 ? `${data.total} ${label.toLowerCase()} response${data.total === 1 ? '' : 's'} recorded · analysed against a 165-theme taxonomy`
@@ -132,6 +144,7 @@ export default function AdminDashboard({ username, onSignOut }) {
             </div>
           </div>
         </div>
+        <WaveRule />
 
         {error ? <Alert kind="error" title="Could not load the dashboard.">{error}</Alert> : null}
 
@@ -149,24 +162,63 @@ export default function AdminDashboard({ username, onSignOut }) {
         {data && data.total > 0 ? (
           <>
             <section className="dash-section">
-              <SectionKicker num="01 · OVERVIEW">
+              <SectionKicker num={num('OVERVIEW')}>
                 <h2 className="sec-title">{label} overview</h2>
                 <div className="section-note">
                   Every figure below reflects the responses currently recorded.
                 </div>
               </SectionKicker>
               <div className="cards">
-                {data.cards.map(([lbl, num]) => (
+                {data.cards.map(([lbl, n]) => (
                   <div className="card" key={lbl}>
-                    <div className="num">{num}</div>
+                    <div className="num">{n}</div>
                     <div className="lbl">{lbl}</div>
                   </div>
                 ))}
               </div>
             </section>
 
+            {data.timeline ? (
+              <section className="dash-section">
+                <SectionKicker num={num('PARTICIPATION')}>
+                  <h2 className="sec-title">Participation Over Time</h2>
+                  <div className="section-note">
+                    Responses received on each of the last {data.timeline.days} days. Hover the wave — or
+                    tab through it — to read a single day.
+                  </div>
+                </SectionKicker>
+
+                <ChartCard title={`Daily ${label.toLowerCase()} responses — last ${data.timeline.days} days`}>
+                  <WaveChart points={data.timeline.points} label="responses" peak />
+                </ChartCard>
+
+                <div className="stat-row">
+                  <StatTile
+                    label="Received in the last 7 days"
+                    value={data.timeline.last_seven}
+                    note={`${data.timeline.in_window} in the last ${data.timeline.days} days`}
+                  />
+                  <StatTile
+                    label="Busiest day"
+                    value={data.timeline.peak[1]}
+                    note={prettyDate(data.timeline.peak[0])}
+                  />
+                  <StatTile
+                    label="Average words per reflection"
+                    value={data.depth?.avg_total ?? '—'}
+                    note={`${(data.depth?.words_written ?? 0).toLocaleString()} words written in total`}
+                  />
+                  <StatTile
+                    label="Distinct themes detected"
+                    value={data.insights.themes_detected ?? '—'}
+                    note="Across both vision questions"
+                  />
+                </div>
+              </section>
+            ) : null}
+
             <section className="dash-section">
-              <SectionKicker num="02 · WHO RESPONDED">
+              <SectionKicker num={num('WHO RESPONDED')}>
                 <h2 className="sec-title">Response Analytics</h2>
                 <div className="section-note">Who has responded, and from where.</div>
               </SectionKicker>
@@ -211,9 +263,59 @@ export default function AdminDashboard({ username, onSignOut }) {
               </div>
             </section>
 
+            {data.depth ? (
+              <section className="dash-section">
+                <SectionKicker num={num('DEPTH & VOICE')}>
+                  <h2 className="sec-title">Depth of Reflection &amp; Shared Vocabulary</h2>
+                  <div className="section-note">
+                    How much people wrote, and the words they reached for. A word is counted once per
+                    response, so one long answer cannot carry the list.
+                  </div>
+                </SectionKicker>
+
+                <div className="two-col" style={{ marginBottom: 20 }}>
+                  <ChartCard
+                    title="Length of Reflection"
+                    note="Both vision answers together, per response."
+                  >
+                    <ColumnChart entries={data.depth.bands} />
+                  </ChartCard>
+                  <ChartCard
+                    title="Most Used Words"
+                    note="Counted once per response, common words removed."
+                  >
+                    <BarChart entries={data.voice} limit={12} />
+                  </ChartCard>
+                </div>
+
+                <div className="stat-row">
+                  <StatTile
+                    label="Average — My Vision for My Future"
+                    value={data.depth.avg_self}
+                    note="words per answer"
+                  />
+                  <StatTile
+                    label="Average — My Vision for India's Future"
+                    value={data.depth.avg_india}
+                    note="words per answer"
+                  />
+                  <StatTile
+                    label="Longest reflection"
+                    value={data.depth.longest}
+                    note="words across both answers"
+                  />
+                  <StatTile
+                    label="Answered both questions"
+                    value={data.depth.both_answered}
+                    note={`of ${data.total} response${data.total === 1 ? '' : 's'}`}
+                  />
+                </div>
+              </section>
+            ) : null}
+
             {view === 'faculty' && data.research ? (
               <section className="dash-section">
-                <SectionKicker num="03 · RESEARCH">
+                <SectionKicker num={num('RESEARCH')}>
                   <h2 className="sec-title">Research Areas &amp; Category Analysis</h2>
                   <div className="section-note">
                     Categories are detected from the four research questions. A profile may appear in more
@@ -222,12 +324,8 @@ export default function AdminDashboard({ username, onSignOut }) {
                 </SectionKicker>
 
                 <div className="two-col" style={{ marginBottom: 20 }}>
-                  <ChartCard title="Research Categories — Pie Chart">
-                    <Pie
-                      entries={data.research.pie}
-                      centerLabel="category classifications"
-                      palette={RESEARCH_PALETTE}
-                    />
+                  <ChartCard title="Research Categories — Share of Classifications">
+                    <Pie entries={data.research.pie} centerLabel="classifications" />
                   </ChartCard>
                   <ChartCard title="Research Categories — Percentage of Profiles">
                     {data.research.percent.length ? (
@@ -252,19 +350,10 @@ export default function AdminDashboard({ username, onSignOut }) {
                   </ChartCard>
                 </div>
 
-                <div className="insight-grid" style={{ marginTop: 0, marginBottom: 20 }}>
-                  <div className="insight">
-                    <div className="insight-label">Faculty with research profile</div>
-                    <div className="insight-value">{data.research.insights.with_profile}</div>
-                  </div>
-                  <div className="insight">
-                    <div className="insight-label">Profiles categorised</div>
-                    <div className="insight-value">{data.research.insights.categorised}</div>
-                  </div>
-                  <div className="insight">
-                    <div className="insight-label">Average domains / profile</div>
-                    <div className="insight-value">{data.research.insights.avg_domains}</div>
-                  </div>
+                <div className="stat-row" style={{ marginBottom: 20 }}>
+                  <StatTile label="Faculty with research profile" value={data.research.insights.with_profile} />
+                  <StatTile label="Profiles categorised" value={data.research.insights.categorised} />
+                  <StatTile label="Average domains / profile" value={data.research.insights.avg_domains} />
                 </div>
 
                 <div className="research-category-grid">
@@ -295,7 +384,7 @@ export default function AdminDashboard({ username, onSignOut }) {
             ) : null}
 
             <section className="dash-section">
-              <SectionKicker num={view === 'faculty' ? '04 · THEMES' : '03 · THEMES'}>
+              <SectionKicker num={num('THEMES')}>
                 <h2 className="sec-title">Vision Thematic Analysis</h2>
                 <div className="section-note">
                   The pies count each response once, under its strongest theme. The lists below keep every
@@ -321,30 +410,27 @@ export default function AdminDashboard({ username, onSignOut }) {
                 </ChartCard>
               </div>
 
-              <div className="insight-grid">
-                <div className="insight">
-                  <div className="insight-label">Leading future theme</div>
-                  <div className="insight-value">
-                    {data.insights.leading_self[0]} · {data.insights.leading_self[1]}
-                  </div>
-                </div>
-                <div className="insight">
-                  <div className="insight-label">Leading India theme</div>
-                  <div className="insight-value">
-                    {data.insights.leading_india[0]} · {data.insights.leading_india[1]}
-                  </div>
-                </div>
-                <div className="insight">
-                  <div className="insight-label">Responses analysed</div>
-                  <div className="insight-value">
-                    {data.insights.analysed} {label.toLowerCase()} reflections
-                  </div>
-                </div>
+              <div className="stat-row">
+                <StatTile
+                  label="Leading future theme"
+                  value={data.insights.leading_self[0]}
+                  note={`${data.insights.leading_self[1]} responses`}
+                />
+                <StatTile
+                  label="Leading India theme"
+                  value={data.insights.leading_india[0]}
+                  note={`${data.insights.leading_india[1]} responses`}
+                />
+                <StatTile
+                  label="Responses analysed"
+                  value={data.insights.analysed}
+                  note={`${label.toLowerCase()} reflections`}
+                />
               </div>
             </section>
 
             <GroupSection
-              num={view === 'faculty' ? '05 · BY DEPARTMENT' : '04 · BY DEPARTMENT'}
+              num={num('BY DEPARTMENT')}
               title="Department-wise Theme Insights"
               note="The five strongest themes for each department, for both questions."
               groups={data.group_themes}
@@ -352,25 +438,26 @@ export default function AdminDashboard({ username, onSignOut }) {
 
             {view === 'student' && data.level_themes ? (
               <GroupSection
-                num="05 · BY LEVEL"
+                num={num('BY LEVEL')}
                 title="Level-wise Theme Insights"
                 note="How aspirations differ across UG, PG and research students."
                 groups={data.level_themes}
               />
             ) : null}
 
-            <section className="dash-section">
-              <SectionKicker num="06 · SUMMARY">
-                <h2 className="sec-title">Executive Summary</h2>
-              </SectionKicker>
-              <ExecSummary summary={data.summary} />
-            </section>
-
             <ResponseExplorer
+              num={num('RESPONSES')}
               view={view}
               onToast={toast.show}
               onChanged={() => setRefreshKey((k) => k + 1)}
             />
+
+            <section className="dash-section">
+              <SectionKicker num={num('SUMMARY')}>
+                <h2 className="sec-title">Executive Summary</h2>
+              </SectionKicker>
+              <ExecSummary summary={data.summary} />
+            </section>
           </>
         ) : null}
       </main>
@@ -421,7 +508,7 @@ function ExecSummary({ summary }) {
       <p>
         For {k("My Vision for India's Future")}, the leading theme is {k(summary.top_india_theme)}.
       </p>
-      <p style={{ fontSize: '13.5px', opacity: 0.75 }}>
+      <p className="summary-foot">
         This summary reflects the responses currently recorded and is recalculated each time the
         dashboard loads.
       </p>

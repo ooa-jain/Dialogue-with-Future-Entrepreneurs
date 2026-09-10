@@ -8,7 +8,7 @@ const SCOPES = [
   { value: 'india', label: 'Has an India vision' },
 ]
 
-export default function ResponseExplorer({ view, onToast, onChanged }) {
+export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToast, onChanged }) {
   const [query, setQuery] = useState('')
   const [debounced, setDebounced] = useState('')
   const [scope, setScope] = useState('')
@@ -73,7 +73,7 @@ export default function ResponseExplorer({ view, onToast, onChanged }) {
 
   return (
     <section className="dash-section">
-      <SectionKicker num="07 · RESPONSES">
+      <SectionKicker num={num}>
         <h2 className="sec-title">
           {view === 'faculty' ? 'Faculty Responses' : 'Student Vision Responses'} — Full View
         </h2>

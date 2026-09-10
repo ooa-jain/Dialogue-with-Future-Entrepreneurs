@@ -17,6 +17,7 @@ import json
 import math
 import re
 from collections import Counter, defaultdict
+from datetime import date, datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
@@ -185,6 +186,118 @@ def research_matches(text: str) -> list[str]:
 
 
 # --------------------------------------------------------------------------
+# participation over time, reflection depth, shared vocabulary
+# --------------------------------------------------------------------------
+
+TIMELINE_DAYS = 30
+
+
+def _as_date(value: Any) -> date | None:
+    """created_at is a datetime from Mongo, an ISO string from an import."""
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str) and value:
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).date()
+        except ValueError:
+            return None
+    return None
+
+
+def daily_timeline(responses: list[dict], days: int = TIMELINE_DAYS) -> dict:
+    """One point per day for the trailing window — empty days included, so the
+    wave keeps its shape instead of joining two distant peaks."""
+    today = datetime.now(timezone.utc).date()
+    start = today - timedelta(days=days - 1)
+
+    per_day: Counter[date] = Counter()
+    for r in responses:
+        d = _as_date(r.get("created_at"))
+        if d is not None:
+            per_day[d] += 1
+
+    points = []
+    for i in range(days):
+        d = start + timedelta(days=i)
+        points.append([d.isoformat(), per_day.get(d, 0)])
+
+    in_window = sum(c for _, c in points)
+    last_seven = sum(c for _, c in points[-7:])
+    peak = max(points, key=lambda p: p[1]) if points else ["—", 0]
+    return {
+        "days": days,
+        "points": points,
+        "in_window": in_window,
+        "last_seven": last_seven,
+        "peak": peak,
+        "dated": sum(1 for r in responses if _as_date(r.get("created_at")) is not None),
+    }
+
+
+DEPTH_BANDS = [
+    ("Under 25 words", 0, 24),
+    ("25 – 49 words", 25, 49),
+    ("50 – 99 words", 50, 99),
+    ("100 words and over", 100, None),
+]
+
+
+def word_count(text: str) -> int:
+    return len([w for w in normalize(text).split() if w])
+
+
+def reflection_depth(responses: list[dict]) -> dict:
+    """How much people actually wrote — the honest measure of engagement."""
+    self_counts = [word_count(r.get("vision_self", "")) for r in responses]
+    india_counts = [word_count(r.get("vision_india", "")) for r in responses]
+    totals = [a + b for a, b in zip(self_counts, india_counts)]
+
+    def mean(values: list[int]) -> float:
+        written = [v for v in values if v]
+        return round(sum(written) / len(written), 1) if written else 0.0
+
+    bands = []
+    for label, low, high in DEPTH_BANDS:
+        count = sum(1 for t in totals if t >= low and (high is None or t <= high))
+        bands.append([label, count])
+
+    return {
+        "avg_self": mean(self_counts),
+        "avg_india": mean(india_counts),
+        "avg_total": mean(totals),
+        "longest": max(totals) if totals else 0,
+        "words_written": sum(totals),
+        "bands": bands,
+        "both_answered": sum(1 for a, b in zip(self_counts, india_counts) if a and b),
+    }
+
+
+VOICE_STOPWORDS = STOPWORDS | set(
+    "there where while every each many much such other others own same still even "
+    "only after before between during without within across along around because "
+    "since until upon these those them themselves myself ourselves being been does "
+    "doing done get gets getting going goes go come comes came like likes really "
+    "well good better best able need needs needed give given gives take takes "
+    "taken work works working think thinks thinking see sees seen say says said "
+    "know knows knowing look looks looking lot bit way ways thing things".split()
+)
+
+
+def top_words(texts: Iterable[str], limit: int = 12) -> list[list]:
+    """The words the cohort reaches for, once the scaffolding is stripped out."""
+    counts: Counter[str] = Counter()
+    for text in texts:
+        seen = {
+            w for w in normalize(text).split()
+            if len(w) >= 5 and w not in VOICE_STOPWORDS and not w.isdigit()
+        }
+        counts.update(seen)  # once per response, so one long answer cannot dominate
+    return [[w.capitalize(), c] for w, c in counts.most_common(limit) if c > 1]
+
+
+# --------------------------------------------------------------------------
 # grouping helpers
 # --------------------------------------------------------------------------
 
@@ -258,13 +371,17 @@ def build_analytics(responses: list[dict], respondent_type: str) -> dict:
         "charts": {"department": departments, "location": locations},
         "themes": {"self": self_themes, "india": india_themes},
         "theme_pies": {
-            "self": collapse(self_pie, 8, "Remaining identified themes"),
-            "india": collapse(india_pie, 8, "Remaining identified themes"),
+            "self": collapse(self_pie, 7, "Remaining identified themes"),
+            "india": collapse(india_pie, 7, "Remaining identified themes"),
         },
+        "timeline": daily_timeline(responses),
+        "depth": reflection_depth(responses),
+        "voice": top_words(list(self_texts) + list(india_texts)),
         "insights": {
             "leading_self": self_themes[0] if self_themes else ["—", 0],
             "leading_india": india_themes[0] if india_themes else ["—", 0],
             "analysed": total,
+            "themes_detected": len({t for t, _ in self_themes} | {t for t, _ in india_themes}),
         },
         "group_themes": [],
         "summary": {},
@@ -357,7 +474,7 @@ def _build_research(responses: list[dict], research_profiles: list[dict]) -> dic
     )
 
     return {
-        "pie": collapse(entries, 8, "Other research categories"),
+        "pie": collapse(entries, 7, "Other research categories"),
         "total_classifications": total_classifications,
         "percent": [
             [name, round(count / total_research * 100, 1) if total_research else 0.0]
