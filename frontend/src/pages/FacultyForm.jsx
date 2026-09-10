@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { emailLooksWrong, required, useWizard } from '../lib/wizard'
 import { ConfirmMark, Cover } from '../components/Cover'
@@ -86,7 +85,17 @@ export default function FacultyForm() {
     if (w.restored) setStarted(true)
   }, [w.restored])
 
-  if (w.status === 'done') return <Confirmation onRestart={w.reset} />
+  if (w.status === 'done') {
+    return (
+      <Confirmation
+        onRestart={w.reset}
+        onStart={() => {
+          w.reset()
+          setStarted(false)
+        }}
+      />
+    )
+  }
 
   if (!started) {
     return (
@@ -397,7 +406,7 @@ function formatDate(value) {
     : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-function Confirmation({ onRestart }) {
+function Confirmation({ onRestart, onStart }) {
   return (
     <Cover variant="back">
       <LogoLockup subtitle="Office of Academics · Faculty Dialogue" variant="light" />
@@ -410,7 +419,7 @@ function Confirmation({ onRestart }) {
       </p>
       <div className="cover-links">
         <button className="btn-outline" type="button" onClick={onRestart}>Start a New Response</button>
-        <Link className="btn-outline" to="/">Back to home</Link>
+        <button className="btn-outline" type="button" onClick={onStart}>Back to faculty dialogue</button>
       </div>
     </Cover>
   )

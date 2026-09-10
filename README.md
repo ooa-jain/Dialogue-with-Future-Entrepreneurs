@@ -6,15 +6,16 @@ with one application.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Landing page — routes people to the right form |
+| `/` | Redirects to `/student` — there is no separate home page |
 | `/student` | Student dialogue — welcome cover, then the 5-step form |
 | `/faculty` | Faculty dialogue — welcome cover, then the 5-step form |
 | `/admin` | One dashboard, with a **Faculty / Student toggle** in the header |
 
-`/student` and `/faculty` are the links you share. Each opens on its own welcome cover — separate
-artwork and copy for each audience — and one click starts the form. Anyone returning to a saved
-draft skips the cover and lands back on their answers. The home page carries no navigation by
-design.
+`/student` and `/faculty` are the only links you share. Each opens on its own welcome cover —
+separate artwork and copy for each audience — and one click starts the form. Anyone returning to a
+saved draft skips the cover and lands back on their answers. There is no home page: `/` simply
+redirects to the student dialogue, and the confirmation screen sends people back to the cover of the
+dialogue they just answered.
 
 ---
 
@@ -102,6 +103,14 @@ changes, so numbers stay comparable with earlier reports:
   (`data/semantic_rules.json`)
 - **15 research categories** for faculty research profiles (`data/research_categories.json`)
 
+Alongside the themes, each dashboard load computes:
+
+- **Participation over time** — one point per day for the trailing 30 days, drawn as a wave
+- **Depth of reflection** — average words per answer, the longest reflection, and a four-band
+  distribution of how much people wrote
+- **Shared vocabulary** — the words the cohort reaches for, counted once per response so a single
+  long answer cannot carry the list
+
 Scoring: 3 points per multi-word phrase, 1 per single word, +5 for a semantic rule. Every theme
 scoring at least 38% of the best score is counted, so one response can carry several themes. The
 donuts count each response once, under its single strongest theme. A response that matches nothing
@@ -158,9 +167,16 @@ To change the taxonomy, edit the JSON files — nothing else needs to change.
   opens on a welcome cover with its own inline illustration, then the stepped form.
 - All artwork is drawn inline as SVG — step bands, cover panels, persona icons. Nothing is fetched
   from an image host, so nothing renders empty, and there are no emoji anywhere in the interface.
-- The dashboard keeps the editorial identity from the original HTML dashboards: Newsreader headings,
-  gold section kickers, conic pie charts, gold theme counts, navy executive summary. Confirmation
-  screens keep the navy cover treatment, including the student persona card.
+- The dashboard now wears the same editorial treatment as the forms — monospace micro-labels, gold
+  marker highlights, hard navy rules and offset shadows — so signing in does not feel like arriving
+  at a different product. Confirmation screens keep the navy cover treatment, including the student
+  persona card.
+- Chart colours are checked, not eyeballed: the categorical slots sit inside the OKLCH lightness
+  band, clear the chroma floor and keep adjacent pairs separable under colour-vision deficiency. A
+  ninth series is folded into “Other” rather than given a new hue, bars carry one hue rather than a
+  decorative gradient, and the wave chart uses monotone interpolation so the curve never dips below
+  a day that recorded nothing. Every chart is readable without colour: the wave carries a table of
+  its daily figures, and the bars and tiles are labelled directly.
 
 **Both**
 
@@ -203,5 +219,6 @@ proxy everything to `:8071`.
 - [ ] `USE_MOCK_DB` and `SEED_MOCK` unset or `0`
 - [ ] MongoDB has authentication enabled and is not exposed publicly
 - [ ] TLS issued and auto-renewing
-#   D i a l o g u e - w i t h - F u t u r e - E n t r e p r e n e u r s  
+#   D i a l o g u e - w i t h - F u t u r e - E n t r e p r e n e u r s 
+ 
  
