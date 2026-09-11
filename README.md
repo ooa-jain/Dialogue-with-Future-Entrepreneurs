@@ -106,8 +106,6 @@ changes, so numbers stay comparable with earlier reports:
 Alongside the themes, each dashboard load computes:
 
 - **Participation over time** — one point per day for the trailing 30 days, drawn as a wave
-- **Depth of reflection** — average words per answer, the longest reflection, and a four-band
-  distribution of how much people wrote
 - **Shared vocabulary** — the words the cohort reaches for, counted once per response so a single
   long answer cannot carry the list
 
@@ -145,7 +143,7 @@ To change the taxonomy, edit the JSON files — nothing else needs to change.
 - Progress steps are clickable for steps already completed.
 - Submit is single-fire; a re-validation pass runs before send, so nothing invalid reaches the API.
 - Optional email field on both forms, for follow-up.
-- Meeting date cannot be set in the future.
+- Both forms ask for the date of the meeting, on step 2; it cannot be set in the future.
 - Closing the tab mid-form warns about unsaved work.
 
 **Dashboard**
@@ -162,14 +160,16 @@ To change the taxonomy, edit the JSON files — nothing else needs to change.
 - The JAIN lockup appears on every screen: the supplied artwork on paper backgrounds, and a
   recoloured version (white roundel, navy JGi, gold dot) on the navy covers. Both files live in
   `frontend/public/`, alongside the favicon cut from the JGi mark.
-- The public forms use a firmer, more graphic treatment of the same navy / gold / paper palette:
-  monospace micro-labels, gold marker highlights, thick navy rules and hard offset shadows. Each form
-  opens on a welcome cover with its own inline illustration, then the stepped form.
+- One typographic rule across the whole application: Newsreader carries the headings and the
+  figures, Inter carries running text, and micro-labels are Inter uppercased and letterspaced.
+  Everything else is the same navy / gold / paper palette — gold marker highlights over whole words,
+  thick navy rules and hard offset shadows. Each form opens on a welcome cover with its own inline
+  illustration, then the stepped form.
 - All artwork is drawn inline as SVG — step bands, cover panels, persona icons. Nothing is fetched
   from an image host, so nothing renders empty, and there are no emoji anywhere in the interface.
-- The dashboard now wears the same editorial treatment as the forms — monospace micro-labels, gold
-  marker highlights, hard navy rules and offset shadows — so signing in does not feel like arriving
-  at a different product. Confirmation screens keep the navy cover treatment, including the student
+- The dashboard wears the same treatment as the forms — serif headings and figures, letterspaced
+  labels, gold marker highlights, hard navy rules and offset shadows — so signing in does not feel
+  like arriving at a different product. Confirmation screens keep the navy cover treatment, including the student
   persona card.
 - Chart colours are checked, not eyeballed: the categorical slots sit inside the OKLCH lightness
   band, clear the chroma floor and keep adjacent pairs separable under colour-vision deficiency. A

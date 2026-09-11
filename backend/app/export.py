@@ -127,6 +127,7 @@ def _student_sheets(wb: Workbook, responses: list[dict]) -> None:
             r.get("year", ""),
             r.get("vision_self", ""),
             r.get("vision_india", ""),
+            r.get("meeting_date", ""),
             _ts(r),
         ]
         for i, r in enumerate(responses, start=1)
@@ -136,10 +137,11 @@ def _student_sheets(wb: Workbook, responses: list[dict]) -> None:
         [
             "S.No.", "Name", "Email", "Department", "Location", "Level of Study",
             "Programme", "Year / Semester",
-            "My Vision for My Future", "My Vision for India's Future", "Submitted",
+            "My Vision for My Future", "My Vision for India's Future",
+            "Date of the meeting", "Submitted",
         ],
         rows,
-        [8, 25, 28, 42, 15, 18, 32, 24, 65, 65, 22],
+        [8, 25, 28, 42, 15, 18, 32, 24, 65, 65, 18, 22],
     )
 
 

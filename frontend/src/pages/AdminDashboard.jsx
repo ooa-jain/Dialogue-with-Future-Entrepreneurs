@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api, setToken } from '../lib/api'
 import { useToast } from '../lib/hooks'
 import {
-  Alert, BarChart, ChartCard, ColumnChart, Empty, MindsetBlock, Pie, SectionKicker,
+  Alert, BarChart, ChartCard, Empty, MindsetBlock, Pie, SectionKicker,
   Spinner, StatTile, ThemeList, Toast, TopBrand, WaveChart, WaveRule,
 } from '../components/ui'
 import ResponseExplorer from '../components/ResponseExplorer'
@@ -87,7 +87,7 @@ export default function AdminDashboard({ username, onSignOut }) {
   const label = view === 'faculty' ? 'Faculty' : 'Student'
 
   // Section numbers are derived, so a hidden section never leaves a gap.
-  const order = ['OVERVIEW', 'PARTICIPATION', 'WHO RESPONDED', 'DEPTH & VOICE']
+  const order = ['OVERVIEW', 'PARTICIPATION', 'WHO RESPONDED', 'VOCABULARY']
   if (view === 'faculty' && data?.research) order.push('RESEARCH')
   order.push('THEMES', 'BY DEPARTMENT')
   if (view === 'student' && data?.level_themes) order.push('BY LEVEL')
@@ -133,7 +133,7 @@ export default function AdminDashboard({ username, onSignOut }) {
       <main className="wrap" id="dash-main">
         <div className="dash-head">
           <div>
-            <span className="tag-mono">Dialogue with Future Entrepreneurs</span>
+            <span className="tag-label">Dialogue with Future Entrepreneurs</span>
             <h1>
               {label} <mark>Response</mark> Insights
             </h1>
@@ -263,53 +263,22 @@ export default function AdminDashboard({ username, onSignOut }) {
               </div>
             </section>
 
-            {data.depth ? (
+            {data.voice?.length ? (
               <section className="dash-section">
-                <SectionKicker num={num('DEPTH & VOICE')}>
-                  <h2 className="sec-title">Depth of Reflection &amp; Shared Vocabulary</h2>
+                <SectionKicker num={num('VOCABULARY')}>
+                  <h2 className="sec-title">Shared Vocabulary</h2>
                   <div className="section-note">
-                    How much people wrote, and the words they reached for. A word is counted once per
-                    response, so one long answer cannot carry the list.
+                    The words the cohort reaches for, across both vision answers. A word is counted
+                    once per response, so one long answer cannot carry the list.
                   </div>
                 </SectionKicker>
 
-                <div className="two-col" style={{ marginBottom: 20 }}>
-                  <ChartCard
-                    title="Length of Reflection"
-                    note="Both vision answers together, per response."
-                  >
-                    <ColumnChart entries={data.depth.bands} />
-                  </ChartCard>
-                  <ChartCard
-                    title="Most Used Words"
-                    note="Counted once per response, common words removed."
-                  >
-                    <BarChart entries={data.voice} limit={12} />
-                  </ChartCard>
-                </div>
-
-                <div className="stat-row">
-                  <StatTile
-                    label="Average — My Vision for My Future"
-                    value={data.depth.avg_self}
-                    note="words per answer"
-                  />
-                  <StatTile
-                    label="Average — My Vision for India's Future"
-                    value={data.depth.avg_india}
-                    note="words per answer"
-                  />
-                  <StatTile
-                    label="Longest reflection"
-                    value={data.depth.longest}
-                    note="words across both answers"
-                  />
-                  <StatTile
-                    label="Answered both questions"
-                    value={data.depth.both_answered}
-                    note={`of ${data.total} response${data.total === 1 ? '' : 's'}`}
-                  />
-                </div>
+                <ChartCard
+                  title="Most Used Words"
+                  note="Counted once per response, common words removed."
+                >
+                  <BarChart entries={data.voice} limit={12} />
+                </ChartCard>
               </section>
             ) : null}
 

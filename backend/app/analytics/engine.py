@@ -236,41 +236,20 @@ def daily_timeline(responses: list[dict], days: int = TIMELINE_DAYS) -> dict:
     }
 
 
-DEPTH_BANDS = [
-    ("Under 25 words", 0, 24),
-    ("25 – 49 words", 25, 49),
-    ("50 – 99 words", 50, 99),
-    ("100 words and over", 100, None),
-]
-
-
 def word_count(text: str) -> int:
     return len([w for w in normalize(text).split() if w])
 
 
 def reflection_depth(responses: list[dict]) -> dict:
     """How much people actually wrote — the honest measure of engagement."""
-    self_counts = [word_count(r.get("vision_self", "")) for r in responses]
-    india_counts = [word_count(r.get("vision_india", "")) for r in responses]
-    totals = [a + b for a, b in zip(self_counts, india_counts)]
-
-    def mean(values: list[int]) -> float:
-        written = [v for v in values if v]
-        return round(sum(written) / len(written), 1) if written else 0.0
-
-    bands = []
-    for label, low, high in DEPTH_BANDS:
-        count = sum(1 for t in totals if t >= low and (high is None or t <= high))
-        bands.append([label, count])
-
+    totals = [
+        word_count(r.get("vision_self", "")) + word_count(r.get("vision_india", ""))
+        for r in responses
+    ]
+    written = [t for t in totals if t]
     return {
-        "avg_self": mean(self_counts),
-        "avg_india": mean(india_counts),
-        "avg_total": mean(totals),
-        "longest": max(totals) if totals else 0,
+        "avg_total": round(sum(written) / len(written), 1) if written else 0.0,
         "words_written": sum(totals),
-        "bands": bands,
-        "both_answered": sum(1 for a, b in zip(self_counts, india_counts) if a and b),
     }
 
 
