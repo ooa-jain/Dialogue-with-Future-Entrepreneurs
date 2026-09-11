@@ -115,6 +115,7 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
             r.level ? `Level: ${r.level}` : '',
             r.programme ? `Programme: ${r.programme}` : '',
             r.year ? `Year: ${r.year}` : '',
+            r.meeting_date ? `Meeting: ${r.meeting_date}` : '',
             r.email ? `Email: ${r.email}` : '',
           ].filter(Boolean)
 

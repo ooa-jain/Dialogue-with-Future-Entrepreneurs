@@ -41,6 +41,9 @@
 
   --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* micro-labels (eyebrows, field labels, buttons, chart titles) — the sans,
+     letterspaced and uppercased, rather than a typewriter face */
+  --label: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -941,7 +944,6 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
    ========================================================================= */
 
 .sheet {
-  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas, monospace;
   --edge: 2px solid var(--navy);
   --drop: 5px 5px 0 var(--navy);
   --drop-gold: 5px 5px 0 var(--gold);
@@ -972,27 +974,28 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 @media (max-width: 650px) { .sheet .top-bar-inner { padding: 0 16px; } }
 .sheet .top-brand b { font-size: 13px; letter-spacing: -0.01em; }
-.sheet .top-brand span { font-family: var(--mono); font-style: normal; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.sheet .top-brand span { font-family: var(--label); font-style: normal; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
 .sheet .save-status {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--navy); background: var(--paper-deep); border: 1.5px solid var(--navy);
   padding: 5px 10px;
 }
 
 /* ---- hero band ---- */
 .sheet-hero { padding: 44px 0 30px; }
-.tag-mono {
-  display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700;
+.tag-label {
+  display: inline-block; font-family: var(--label); font-size: 11px; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy);
   background: var(--gold-soft); border: 1.5px solid var(--navy); padding: 6px 12px;
 }
 .sheet-hero h1 {
-  font-size: clamp(2.3rem, 5.4vw, 3.7rem); font-weight: 800; letter-spacing: -0.035em;
-  line-height: 1.02; color: var(--navy); margin: 20px 0 0;
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.015em;
+  font-size: clamp(2.2rem, 5vw, 3.5rem); line-height: 1.08; color: var(--navy); margin: 20px 0 0;
 }
 .sheet-hero h1 mark {
-  background: linear-gradient(to top, var(--gold-soft) 46%, transparent 46%);
-  color: var(--navy); padding: 0 2px;
+  background: var(--gold-soft); color: var(--navy);
+  padding: 0.04em 0.14em; border-radius: 2px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
 .sheet-hero p { max-width: 58ch; margin-top: 16px; font-size: 15.5px; line-height: 1.65; color: var(--slate); }
 
@@ -1006,7 +1009,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 .sheet .p-step .p-dot { display: none; }
 .sheet .p-step::before {
-  content: attr(data-num); font-family: var(--mono); font-size: 11px; font-weight: 700;
+  content: attr(data-num); font-family: var(--label); font-size: 11px; font-weight: 700;
   letter-spacing: 0.1em; color: var(--slate-soft); display: block; margin-bottom: 5px;
 }
 .sheet .p-label {
@@ -1032,14 +1035,14 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
   padding: clamp(22px, 3.4vw, 38px); margin-bottom: 4px;
 }
 .sheet .step-kicker {
-  font-family: var(--mono); font-style: normal; font-size: 11px; font-weight: 700;
+  font-family: var(--label); font-style: normal; font-size: 11px; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy);
   background: var(--gold-soft); border: 1.5px solid var(--navy);
   display: inline-block; padding: 5px 10px; margin-bottom: 18px;
 }
 .sheet .step-heading {
-  font-family: var(--sans); font-weight: 800; letter-spacing: -0.03em;
-  font-size: clamp(1.55rem, 3vw, 2.15rem); line-height: 1.1; margin-bottom: 20px;
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.012em;
+  font-size: clamp(1.5rem, 2.8vw, 2rem); line-height: 1.18; margin-bottom: 20px;
 }
 .sheet .research-note {
   font-family: var(--sans); font-size: 14px; line-height: 1.65; color: var(--ink);
@@ -1050,16 +1053,16 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 /* ---- fields ---- */
 .sheet .field-group:focus-within { transform: none; }
 .sheet .field-label {
-  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  font-family: var(--label); font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--navy); margin-bottom: 9px;
 }
 .sheet .field-optional {
-  font-family: var(--mono); font-style: normal; font-size: 10px; letter-spacing: 0.08em;
+  font-family: var(--label); font-style: normal; font-size: 10px; letter-spacing: 0.08em;
   color: var(--slate-soft); text-transform: uppercase;
 }
 .sheet .field-hint { font-size: 12.5px; color: var(--slate); }
 .sheet .field-error {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  font-family: var(--label); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
   font-weight: 700;
 }
 
@@ -1083,7 +1086,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 .sheet .choice:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--navy); }
 .sheet .choice strong { font-size: 14px; font-weight: 700; }
-.sheet .choice small { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+.sheet .choice small { font-family: var(--label); font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; }
 .sheet .choice[aria-pressed='true'] {
   background: var(--gold-soft); box-shadow: 4px 4px 0 var(--navy); transform: translate(-2px, -2px);
 }
@@ -1092,7 +1095,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 /* reflection */
 .sheet .vision-tools { gap: 7px; }
 .sheet .prompt-chip {
-  font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+  font-family: var(--label); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
   text-transform: uppercase; border: 1.5px solid var(--navy); border-radius: 4px;
   color: var(--navy); padding: 7px 11px;
 }
@@ -1102,12 +1105,12 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .sheet .reflection-wrap[data-invalid='true'] { box-shadow: 3px 3px 0 var(--error); }
 .sheet .reflection-wrap textarea { padding: 18px; font-size: 18px; min-height: 220px; }
 .sheet .reflection-footer {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
   border-top: 1.5px solid var(--navy); background: var(--paper); padding: 9px 15px;
 }
 .sheet .vision-meter { margin: 0; height: 5px; border-radius: 0; background: var(--paper-deep); }
 .sheet .vision-meter-label {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase;
+  font-family: var(--label); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase;
   margin: 0; padding: 8px 15px 10px; background: var(--paper); color: var(--slate);
 }
 
@@ -1118,18 +1121,18 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 .sheet .engagement-card::before { display: none; }
 .sheet .engagement-number {
-  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  font-family: var(--label); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--navy); background: var(--gold-soft);
   border: 1.5px solid var(--navy); padding: 5px 10px;
 }
 .sheet .engagement-remove {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
   text-decoration: none; border: 1.5px solid var(--line); padding: 5px 9px; border-radius: 4px;
 }
 .sheet .engagement-remove:hover { border-color: var(--error); }
 .sheet .engagement-add {
   border: 2px dashed var(--navy); border-radius: 4px; color: var(--navy);
-  font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+  font-family: var(--label); font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
   text-transform: uppercase; padding: 14px;
 }
 .sheet .engagement-add:hover { background: var(--gold-soft); transform: none; }
@@ -1137,12 +1140,12 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 /* review */
 .sheet .review-row { border-bottom: 1.5px solid var(--line); padding: 16px 0; }
 .sheet .review-key {
-  font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
+  font-family: var(--label); font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--navy);
 }
 .sheet .review-row.is-long .review-val { font-family: var(--sans); font-size: 14.5px; line-height: 1.65; }
 .sheet .review-edit {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--navy); text-decoration: none; border: 1.5px solid var(--navy);
   padding: 5px 10px; border-radius: 4px;
 }
@@ -1152,7 +1155,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .sheet .step-nav { margin-top: 26px; padding: 14px 0 0; }
 .sheet .step-nav::before { display: none; }
 .sheet .btn {
-  border-radius: 4px; font-family: var(--mono); font-size: 12px; font-weight: 700;
+  border-radius: 4px; font-family: var(--label); font-size: 12px; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; padding: 15px 26px;
 }
 .sheet .btn-primary {
@@ -1203,7 +1206,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .sheet-footer {
   display: flex; align-items: center; gap: 14px;
   margin-top: 30px; padding-top: 20px; border-top: 1.5px solid var(--line);
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.09em;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--slate);
 }
 .sheet-footer-logo { height: 30px; flex: 0 0 auto; }
@@ -1243,7 +1246,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .dash-sheet .dash-bar-inner { padding: 14px 28px; }
 .dash-sheet .top-brand b { font-size: 13px; letter-spacing: -0.01em; }
 .dash-sheet .top-brand span {
-  font-family: var(--mono); font-style: normal; font-size: 10.5px;
+  font-family: var(--label); font-style: normal; font-size: 10.5px;
   letter-spacing: 0.08em; text-transform: uppercase;
 }
 
@@ -1251,7 +1254,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
   padding: 4px; background: var(--paper-deep); border: 1.5px solid var(--navy); border-radius: 4px;
 }
 .dash-sheet .segmented button {
-  border-radius: 2px; font-family: var(--mono); font-size: 11px; font-weight: 700;
+  border-radius: 2px; font-family: var(--label); font-size: 11px; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 16px;
 }
 .dash-sheet .segmented button[aria-pressed='true'] {
@@ -1261,7 +1264,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 
 .dash-sheet .btn-line {
   border: 1.5px solid var(--navy); border-radius: 4px; color: var(--navy);
-  font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+  font-family: var(--label); font-size: 10.5px; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px;
 }
 .dash-sheet .btn-line:hover:not(:disabled) {
@@ -1273,15 +1276,16 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 /* ---- page head ---- */
 .dash-sheet .dash-head { border-bottom: var(--edge); margin: 34px 0 0; padding-bottom: 22px; }
 .dash-sheet .dash-head h1 {
-  font-family: var(--sans); font-weight: 800; letter-spacing: -0.035em; line-height: 1.03;
-  font-size: clamp(1.9rem, 4.2vw, 3rem); color: var(--navy); margin-top: 16px;
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.015em; line-height: 1.1;
+  font-size: clamp(1.8rem, 3.8vw, 2.7rem); color: var(--navy); margin-top: 16px;
 }
 .dash-sheet .dash-head h1 mark {
-  background: linear-gradient(to top, var(--gold-soft) 46%, transparent 46%);
-  color: var(--navy); padding: 0 2px;
+  background: var(--gold-soft); color: var(--navy);
+  padding: 0.04em 0.14em; border-radius: 2px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
 .dash-sheet .dash-sub {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.07em;
   text-transform: uppercase; color: var(--slate); margin-top: 12px; line-height: 1.7;
 }
 .wave-rule { display: block; width: 100%; height: 46px; margin: 0 0 6px; }
@@ -1289,14 +1293,14 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 /* ---- section furniture ---- */
 .dash-sheet .section-kicker { margin: 44px 0 12px; }
 .dash-sheet .section-kicker .num {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em;
+  font-family: var(--label); font-size: 10.5px; letter-spacing: 0.12em;
   color: var(--navy); background: var(--gold-soft);
   border: 1.5px solid var(--navy); padding: 5px 10px;
 }
 .dash-sheet .section-kicker .line { background: var(--navy); height: 1.5px; }
 .dash-sheet h2.sec-title {
-  font-family: var(--sans); font-weight: 800; letter-spacing: -0.03em;
-  font-size: clamp(1.4rem, 2.4vw, 1.8rem); color: var(--navy);
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em;
+  font-size: clamp(1.35rem, 2.2vw, 1.65rem); color: var(--navy);
 }
 .dash-sheet .section-note { font-size: 13px; color: var(--slate); max-width: 78ch; }
 
@@ -1314,11 +1318,11 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .dash-sheet .chart-card { padding: 22px; }
 .dash-sheet .card { padding: 18px 20px; }
 .dash-sheet .card .num {
-  font-family: var(--sans); font-weight: 800; letter-spacing: -0.03em; font-size: 2.1rem;
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em; font-size: 2.1rem;
 }
 .dash-sheet .card .lbl,
 .dash-sheet .chart-title {
-  font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+  font-family: var(--label); font-size: 10.5px; font-weight: 700;
   letter-spacing: 0.09em; text-transform: uppercase; color: var(--slate);
 }
 .dash-sheet .chart-title { color: var(--navy); margin-bottom: 6px; }
@@ -1330,7 +1334,7 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .dash-sheet .research-percent-track { background: var(--chart-track); border-radius: 4px; }
 .dash-sheet .department-total,
 .dash-sheet .research-chip {
-  border-radius: 2px; font-family: var(--mono); font-size: 10px;
+  border-radius: 2px; font-family: var(--label); font-size: 10px;
   letter-spacing: 0.07em; text-transform: uppercase;
 }
 .dash-sheet .empty-state { border-radius: 4px; border: 1.5px dashed var(--navy); }
@@ -1351,12 +1355,12 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 .stat-tile { padding: 17px 18px; }
 .stat-label {
-  font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  font-family: var(--label); font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--slate-soft); line-height: 1.5;
 }
 .stat-value {
-  font-family: var(--sans); font-weight: 800; letter-spacing: -0.03em;
-  font-size: 1.6rem; line-height: 1.15; color: var(--navy); margin-top: 7px;
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em;
+  font-size: 1.55rem; line-height: 1.2; color: var(--navy); margin-top: 7px;
 }
 .stat-note { font-size: 11.5px; color: var(--slate); margin-top: 5px; line-height: 1.5; }
 
@@ -1366,15 +1370,15 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .wave-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .wave-grid { stroke: var(--chart-grid); stroke-width: 1; }
 .wave-tick {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  font-family: var(--label); font-size: 10px; letter-spacing: 0.06em;
   fill: var(--slate-soft); text-transform: uppercase;
 }
 .wave-line { fill: none; stroke: var(--chart-1); stroke-width: 2; stroke-linecap: round; }
 .wave-dot { fill: var(--chart-1); stroke: var(--white); stroke-width: 2; }
 .wave-peak-dot { fill: var(--chart-2); stroke: var(--white); stroke-width: 2; }
 .wave-peak-label {
-  font-family: var(--mono); font-size: 10px; font-weight: 700;
-  letter-spacing: 0.06em; fill: var(--navy);
+  font-family: var(--label); font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.05em; fill: var(--navy);
 }
 .wave-crosshair { stroke: var(--navy); stroke-opacity: 0.28; stroke-width: 1; }
 .wave-hit { fill: transparent; cursor: crosshair; }
@@ -1387,14 +1391,14 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 .wave-tip b { font-size: 14px; }
 .wave-tip span {
-  display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.07em;
+  display: block; font-family: var(--label); font-size: 9.5px; letter-spacing: 0.07em;
   text-transform: uppercase; color: var(--gold-soft); margin-top: 3px;
 }
 
 /* the table twin — every value readable without colour or hover */
 .chart-table { margin-top: 14px; }
 .chart-table summary {
-  font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+  font-family: var(--label); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--navy); cursor: pointer; padding: 6px 0;
 }
 .chart-table table { width: 100%; border-collapse: collapse; margin-top: 8px; }
@@ -1403,57 +1407,23 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
   font-variant-numeric: tabular-nums;
 }
 .chart-table th {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  font-family: var(--label); font-size: 10px; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--slate);
 }
 .chart-table td:last-child, .chart-table th:last-child { text-align: right; width: 90px; }
-
-/* ---- column bars ---- */
-.column-chart { padding-top: 6px; }
-.column-row { display: flex; align-items: flex-end; height: 210px; }
-.column-slot {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  height: 100%; min-width: 0; padding: 0 8px;
-}
-.column-value {
-  font-family: var(--sans); font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em;
-  color: var(--navy); margin-bottom: 6px;
-}
-.column-track {
-  flex: 1; width: calc(100% + 16px); display: flex; align-items: flex-end;
-  border-bottom: 1.5px solid var(--navy); padding: 0 8px;
-}
-.column-fill { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.6s var(--ease); }
-.column-label {
-  font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em;
-  text-transform: uppercase; color: var(--slate); margin-top: 9px; text-align: center;
-  line-height: 1.35; overflow-wrap: anywhere;
-}
-.column-foot { font-size: 11px; color: var(--slate-soft); margin-top: 12px; }
 
 @media (max-width: 900px) {
   .dash-sheet .wrap { padding: 0 16px 60px; }
   .dash-sheet .dash-bar-inner { padding: 12px 16px; }
   .stat-row { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-  .column-row { height: 170px; }
-  .column-slot { padding: 0 4px; }
   .wave-rule { height: 32px; }
 }
 
-/* Serif belongs to the covers and the written word — inside the dashboard it
-   stays on respondents' own prose and the executive summary, while every
-   figure and heading takes the same bold sans as the forms. */
-.dash-sheet .theme-pie-center,
-.dash-sheet .theme-count,
-.dash-sheet .mindset-theme-count,
-.dash-sheet .research-percent-value,
-.dash-sheet .research-category-count,
-.dash-sheet .code-value {
-  font-family: var(--sans); font-weight: 800; letter-spacing: -0.02em;
-}
+/* Headings and figures wear the serif; running text and micro-labels wear the
+   sans. One rule, applied everywhere, instead of a mix per component. */
 .dash-sheet .department-name,
 .dash-sheet .research-category-name,
 .dash-sheet .code-card h3 {
-  font-family: var(--sans); font-weight: 700; letter-spacing: -0.02em; font-size: 1rem;
+  font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em; font-size: 1.08rem;
 }
-.dash-sheet .theme-pie-center small { font-weight: 600; letter-spacing: 0; }
+.dash-sheet .theme-pie-center small { font-weight: 600; letter-spacing: 0.02em; }

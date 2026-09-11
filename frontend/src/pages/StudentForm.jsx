@@ -17,7 +17,7 @@ const OTHER = 'Others (Please specify)'
 
 const INITIAL = {
   name: '', email: '', department: '', location: '',
-  level: '', programme: '', year: '',
+  level: '', programme: '', year: '', meeting_date: '',
   vision_self: '', vision_india: '',
 }
 
@@ -51,6 +51,7 @@ const validators = {
     if (required(d.level)) e.level = 'Please choose your level of study.'
     if (required(d.programme)) e.programme = 'Please enter your programme.'
     if (required(d.year)) e.year = 'Please select your year / semester.'
+    if (required(d.meeting_date)) e.meeting_date = 'Please choose the date of the meeting.'
     return e
   },
   3: (d) => (required(d.vision_self) ? { vision_self: 'Please share your vision.' } : {}),
@@ -75,6 +76,7 @@ export default function StudentForm() {
   })
 
   const years = useMemo(() => meta?.years_by_level?.[w.data.level] || [], [meta, w.data.level])
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
 
   // Someone returning to a saved draft goes straight back to their answers.
   useEffect(() => {
@@ -233,6 +235,14 @@ export default function StudentForm() {
                 </Select>
               </Field>
             </div>
+
+            <Field label="Date of the meeting" htmlFor="f-meeting_date" error={w.errors.meeting_date}>
+              <TextInput
+                id="f-meeting_date" type="date" max={today} value={w.data.meeting_date}
+                error={w.errors.meeting_date}
+                onChange={(e) => w.set({ meeting_date: e.target.value })}
+              />
+            </Field>
           </section>
         ) : null}
 
@@ -291,6 +301,7 @@ export default function StudentForm() {
                 { key: 'Level', value: w.data.level, step: 2 },
                 { key: 'Programme', value: w.data.programme, step: 2 },
                 { key: 'Year / Semester', value: w.data.year, step: 2 },
+                { key: 'Date of the meeting', value: formatDate(w.data.meeting_date), step: 2 },
                 { key: 'My Vision for My Future', value: w.data.vision_self, step: 3, long: true },
                 { key: "My Vision for India's Future", value: w.data.vision_india, step: 4, long: true },
               ]}
@@ -357,6 +368,14 @@ function persona(text) {
       title: 'Future Builder', tag: 'Visionary Student', icon: 'compass', cls: 'blue',
       note: 'You are imagining possibilities and thinking beyond the present.',
     }
+}
+
+function formatDate(value) {
+  if (!value) return ''
+  const d = new Date(`${value}T00:00:00`)
+  return Number.isNaN(d.getTime())
+    ? value
+    : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 function Confirmation({ data, onRestart, onStart }) {

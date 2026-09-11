@@ -151,6 +151,9 @@ def student_docs(n: int) -> list[dict]:
                 "level": level,
                 "programme": random.choice(PROGRAMMES),
                 "year": random.choice(YEARS[level]),
+                "meeting_date": (
+                    datetime.now(timezone.utc) - timedelta(days=random.randint(0, 30))
+                ).date().isoformat(),
                 "vision_self": vs,
                 "vision_india": vi,
                 "created_at": datetime.now(timezone.utc) - timedelta(hours=random.randint(1, 400)),

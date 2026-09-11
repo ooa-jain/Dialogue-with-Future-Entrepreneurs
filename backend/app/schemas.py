@@ -76,6 +76,7 @@ class StudentSubmission(BaseModel):
     level: ShortText
     programme: ShortText
     year: ShortText
+    meeting_date: date
     vision_self: Text
     vision_india: Text
 

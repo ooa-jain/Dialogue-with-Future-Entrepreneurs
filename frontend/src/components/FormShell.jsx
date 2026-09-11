@@ -57,7 +57,7 @@ export function ProgressTrack({ steps, current, furthest, onJump }) {
 export function SheetHero({ tag, title, highlight, tail, children }) {
   return (
     <header className="sheet-hero">
-      <span className="tag-mono">{tag}</span>
+      <span className="tag-label">{tag}</span>
       <h1>
         {title} <mark>{highlight}</mark>
         {tail ? ` ${tail}` : null}

@@ -309,9 +309,6 @@ export const PIE_PALETTE = [
   '#d16022', '#2bb3b9', '#9a3936', '#899d41',
 ]
 
-/** Single-hue ramp for ordered bands (light → dark, monotone lightness). */
-export const SEQUENTIAL_BLUE = ['#79b0e8', '#5593d6', '#3876be', '#215aa2']
-
 /** Conic-gradient donut, as used on the original dashboards. */
 export function Pie({ entries, centerLabel = 'responses', palette = PIE_PALETTE }) {
   if (!entries?.length) return <Empty>No data yet.</Empty>
@@ -507,7 +504,8 @@ export function WaveChart({ points, label = 'responses', peak }) {
 
   const counts = points.map((p) => p[1])
   const max = Math.max(...counts, 1)
-  const niceMax = max <= 4 ? max : Math.ceil(max / 4) * 4
+  // Round up to an even number so the mid gridline lands on a whole response.
+  const niceMax = max <= 3 ? max : Math.ceil(max / 2) * 2
   const innerW = W - PAD.left - PAD.right
   const innerH = H - PAD.top - PAD.bottom
   const x = (i) => PAD.left + (points.length === 1 ? innerW / 2 : (i / (points.length - 1)) * innerW)
@@ -517,7 +515,7 @@ export function WaveChart({ points, label = 'responses', peak }) {
   const line = smoothPath(coords)
   const area = `${line} L ${x(points.length - 1)} ${PAD.top + innerH} L ${x(0)} ${PAD.top + innerH} Z`
   // Integer ticks only — a gridline labelled 2 must not sit at 1.5.
-  const ticks = niceMax <= 4
+  const ticks = niceMax <= 3
     ? Array.from({ length: niceMax + 1 }, (_, i) => i)
     : [0, niceMax / 2, niceMax]
   const peakIndex = counts.indexOf(Math.max(...counts))
@@ -633,46 +631,6 @@ export function WaveChart({ points, label = 'responses', peak }) {
           </tbody>
         </table>
       </details>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------- column bars */
-/**
- * Vertical bar graph for a handful of ordered bands. One hue, stepped
- * light → dark with the band order — never darker-because-bigger.
- */
-export function ColumnChart({ entries, palette = SEQUENTIAL_BLUE, unit = '' }) {
-  if (!entries?.length) return <Empty>No data yet.</Empty>
-  const max = Math.max(...entries.map((e) => e[1]), 1)
-  const total = entries.reduce((sum, e) => sum + e[1], 0)
-  return (
-    <div className="column-chart">
-      <div className="column-row">
-        {entries.map(([label, count], i) => (
-          <div
-            className="column-slot"
-            key={label}
-            title={`${label}: ${count}${unit}`}
-          >
-            <div className="column-value">{count}</div>
-            <div className="column-track">
-              <div
-                className="column-fill"
-                style={{
-                  height: `${(count / max) * 100}%`,
-                  minHeight: count ? 3 : 0,
-                  background: palette[i % palette.length],
-                }}
-              />
-            </div>
-            <div className="column-label">{label}</div>
-          </div>
-        ))}
-      </div>
-      <div className="column-foot">
-        {total} response{total === 1 ? '' : 's'} placed across {entries.length} bands
-      </div>
     </div>
   )
 }
