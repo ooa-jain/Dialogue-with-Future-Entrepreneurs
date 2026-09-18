@@ -204,14 +204,17 @@ export default function StudentForm() {
             <VisualFrame scene="journey" caption="Your current chapter is part of the story you are writing." />
 
             <div className="field-group" data-field="level">
-              <div className="field-label">Level of study</div>
+              <div className="field-label" id="level-label">Level of study</div>
               <ChoiceGrid
                 name="Level of study"
+                labelledBy="level-label"
+                describedBy={w.errors.level ? 'level-error' : undefined}
+                invalid={Boolean(w.errors.level)}
                 options={(meta?.levels || []).map((l) => ({ value: l.value, label: l.label, hint: l.hint }))}
                 value={w.data.level}
                 onChange={(v) => w.set({ level: v, year: '' })}
               />
-              <FieldError>{w.errors.level}</FieldError>
+              <FieldError id="level-error">{w.errors.level}</FieldError>
             </div>
 
             <div className="grid-2">
@@ -256,7 +259,7 @@ export default function StudentForm() {
             <VisualFrame scene="horizon" caption="Think beyond your next exam. Where do you see yourself going?" />
 
             <div className="field-group" data-field="vision_self">
-              <div className="field-label">My Vision for My Future</div>
+              <label className="field-label" htmlFor="f-vision_self">My Vision for My Future</label>
               <Reflection
                 id="f-vision_self" value={w.data.vision_self} error={w.errors.vision_self}
                 onChange={(v) => w.set({ vision_self: v })} prompts={SELF_PROMPTS}
@@ -277,7 +280,7 @@ export default function StudentForm() {
             <VisualFrame scene="nation" caption="If your generation could shape India, what would you change?" />
 
             <div className="field-group" data-field="vision_india">
-              <div className="field-label">My Vision for India&rsquo;s Future</div>
+              <label className="field-label" htmlFor="f-vision_india">My Vision for India&rsquo;s Future</label>
               <Reflection
                 id="f-vision_india" value={w.data.vision_india} error={w.errors.vision_india}
                 onChange={(v) => w.set({ vision_india: v })} prompts={INDIA_PROMPTS}
@@ -342,7 +345,7 @@ const PERSONAS = [
   [/research|phd|doctor|scientific|knowledge|publication/, 'Knowledge Creator',
     'Research & Discovery', 'research', 'purple',
     'You are driven to discover, question and create knowledge that can move society forward.'],
-  [/innov|technology|artificial intelligence|ai|digital|machine learning|robot/, 'Innovation Catalyst',
+  [/innov|technolog|artificial intelligence|\bai\b|digital|machine learning|robot/, 'Innovation Catalyst',
     'Innovation & Technology', 'spark', 'teal',
     'You imagine a future shaped by new ideas, technology and practical solutions.'],
   [/leadership|leader|manage|decision|influence/, 'Future Leader',

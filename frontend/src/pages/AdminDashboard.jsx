@@ -86,11 +86,17 @@ export default function AdminDashboard({ username, onSignOut }) {
 
   const label = view === 'faculty' ? 'Faculty' : 'Student'
 
-  // Section numbers are derived, so a hidden section never leaves a gap.
-  const order = ['OVERVIEW', 'PARTICIPATION', 'WHO RESPONDED', 'VOCABULARY']
+  // Section numbers are derived from the sections that actually render, so a
+  // hidden one never leaves a gap in the sequence. Each condition here has to
+  // match the condition on the section below.
+  const order = ['OVERVIEW']
+  if (data?.timeline) order.push('PARTICIPATION')
+  order.push('WHO RESPONDED')
+  if (data?.voice?.length) order.push('VOCABULARY')
   if (view === 'faculty' && data?.research) order.push('RESEARCH')
-  order.push('THEMES', 'BY DEPARTMENT')
-  if (view === 'student' && data?.level_themes) order.push('BY LEVEL')
+  order.push('THEMES')
+  if (data?.group_themes?.length) order.push('BY DEPARTMENT')
+  if (view === 'student' && data?.level_themes?.length) order.push('BY LEVEL')
   order.push('RESPONSES', 'SUMMARY')
   const num = (name) => `${String(order.indexOf(name) + 1).padStart(2, '0')} · ${name}`
 
@@ -116,12 +122,23 @@ export default function AdminDashboard({ username, onSignOut }) {
           </div>
 
           <div className="head-actions">
-            <button className="btn-line" onClick={() => setRefreshKey((k) => k + 1)}>Refresh</button>
-            <button className="btn-line" onClick={download} disabled={exporting || !data?.total}>
-              {exporting ? 'Preparing…' : 'Download Excel'}
+            <button
+              type="button" className="btn-line" disabled={loading}
+              onClick={() => setRefreshKey((k) => k + 1)}
+            >
+              {loading ? 'Refreshing…' : 'Refresh'}
             </button>
             <button
-              className="btn-line" title={`Signed in as ${username}`}
+              type="button" className="btn-line" onClick={download}
+              disabled={exporting || !data?.total}
+            >
+              {exporting ? 'Preparing…' : 'Download Excel'}
+            </button>
+            {/* who is signed in belongs on the page, not in a tooltip that
+                never appears on a touch screen or under a keyboard */}
+            <span className="who-line">{username}</span>
+            <button
+              type="button" className="btn-line"
               onClick={() => { setToken(''); onSignOut() }}
             >
               Sign out
@@ -147,6 +164,10 @@ export default function AdminDashboard({ username, onSignOut }) {
         <WaveRule />
 
         {error ? <Alert kind="error" title="Could not load the dashboard.">{error}</Alert> : null}
+
+        <div className="sr-only" role="status" aria-live="polite">
+          {loading ? 'Loading insights' : data ? `${data.total} ${label.toLowerCase()} responses loaded` : ''}
+        </div>
 
         {loading && !data ? (
           <div className="page-loading"><Spinner label="Loading insights" /> Loading insights…</div>
@@ -183,8 +204,8 @@ export default function AdminDashboard({ username, onSignOut }) {
                 <SectionKicker num={num('PARTICIPATION')}>
                   <h2 className="sec-title">Participation Over Time</h2>
                   <div className="section-note">
-                    Responses received on each of the last {data.timeline.days} days. Hover the wave — or
-                    tab through it — to read a single day.
+                    Responses received on each of the last {data.timeline.days} days. Hover the wave to
+                    read a single day, or open the table under it for every figure.
                   </div>
                 </SectionKicker>
 

@@ -353,6 +353,7 @@ a { color: var(--navy); }
   text-align: center; background: none; border: 0; padding: 0; cursor: default;
 }
 .p-step[data-clickable='true'] { cursor: pointer; }
+.p-step[aria-disabled='true'] { cursor: default; }
 .p-dot {
   width: 19px; height: 19px; border-radius: 50%;
   background: var(--paper); border: 1.5px solid var(--line); transition: all 0.35s var(--ease);
@@ -480,6 +481,7 @@ textarea.input { min-height: 130px; resize: vertical; line-height: 1.6; }
 
 /* choice cards */
 .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.choice-grid[data-invalid='true'] .choice { border-color: var(--error); }
 .choice {
   position: relative; overflow: hidden; text-align: left;
   border: 1.5px solid var(--line); background: var(--white);
@@ -553,6 +555,9 @@ textarea.input { min-height: 130px; resize: vertical; line-height: 1.6; }
 }
 .engagement-remove:hover { color: var(--error); }
 .engagement-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.engagement-wide { grid-column: 1 / -1; }
+/* inside a card the fields already sit in a grid — drop the stacking margin */
+.engagement-grid .field-group { margin-bottom: 0; }
 .engagement-add {
   width: 100%; margin-top: 4px; border: 1.5px dashed var(--line); background: transparent;
   color: var(--navy); padding: 15px 20px; border-radius: var(--radius-md);
@@ -593,6 +598,9 @@ textarea.input { min-height: 130px; resize: vertical; line-height: 1.6; }
   transition: all 0.25s var(--ease);
 }
 .btn-line:hover { border-color: var(--gold); background: var(--paper); }
+.btn-line:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-line-danger { border-color: var(--error); color: var(--error); }
+.btn-line-danger:hover { border-color: var(--error); background: rgba(179, 67, 43, 0.06); }
 
 /* review */
 .review-grid { display: flex; flex-direction: column; margin-bottom: 20px; }
@@ -663,6 +671,11 @@ textarea.input { min-height: 130px; resize: vertical; line-height: 1.6; }
 .dash-head h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.7rem, 3vw, 2.2rem); color: var(--navy); }
 .dash-sub { font-size: 13px; color: var(--slate-soft); margin-top: 4px; }
 .head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.who-line {
+  font-size: 12px; color: var(--slate); white-space: nowrap;
+  padding-left: 10px; border-left: 1px solid var(--line);
+}
+@media (max-width: 650px) { .who-line { padding-left: 0; border-left: 0; } }
 
 /* faculty / student toggle */
 .segmented {
@@ -838,6 +851,12 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 .response-count { font-size: 12px; color: var(--slate-soft); margin-left: auto; }
 
 .response-list { display: grid; gap: 14px; }
+.response-skeleton {
+  height: 168px; border-radius: 16px; border: 1px solid var(--line);
+  background: linear-gradient(100deg, var(--white) 30%, var(--paper-deep) 50%, var(--white) 70%);
+  background-size: 300% 100%; animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer { to { background-position: -150% 0; } }
 .response-card {
   background: var(--white); border: 1px solid var(--line); border-radius: 16px;
   padding: 20px 22px; box-shadow: 0 3px 12px rgba(11, 31, 69, 0.035);
@@ -1382,7 +1401,6 @@ h2.sec-title { font-family: var(--serif); font-weight: 500; font-size: 1.45rem; 
 }
 .wave-crosshair { stroke: var(--navy); stroke-opacity: 0.28; stroke-width: 1; }
 .wave-hit { fill: transparent; cursor: crosshair; }
-.wave-hit:focus-visible { fill: rgba(216, 154, 31, 0.16); outline: none; }
 .wave-tip {
   position: absolute; top: 2px; transform: translateX(-50%);
   background: var(--navy); color: var(--white); border: 1.5px solid var(--navy);

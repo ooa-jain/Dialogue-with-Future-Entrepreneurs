@@ -171,7 +171,11 @@ export function Combobox({ id, options, value, onChange, placeholder, error, oth
       e.preventDefault()
       if (!open) {
         setOpen(true)
-        setActive(0)
+        setActive(filtered.length ? 0 : -1)
+        return
+      }
+      if (!filtered.length) {
+        setActive(-1) // an empty list has nothing to move through
         return
       }
       const next = e.key === 'ArrowDown' ? active + 1 : active - 1
@@ -182,6 +186,9 @@ export function Combobox({ id, options, value, onChange, placeholder, error, oth
         pick(filtered[active])
       }
     } else if (e.key === 'Escape') {
+      setOpen(false)
+      setActive(-1)
+    } else if (e.key === 'Tab') {
       setOpen(false)
       setActive(-1)
     }
@@ -220,18 +227,21 @@ export function Combobox({ id, options, value, onChange, placeholder, error, oth
             </div>
           ) : (
             filtered.map((option, i) => (
-              <button
+              // Not a button: in a combobox the input keeps focus and drives
+              // the list through aria-activedescendant. Focusable options put
+              // every department in the tab order.
+              <div
                 key={option}
-                type="button"
                 id={`${listId}-opt-${i}`}
                 role="option"
                 aria-selected={option === value}
                 className={`combo-option${i === active ? ' is-active' : ''}`}
                 onMouseEnter={() => setActive(i)}
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => pick(option)}
               >
                 {option}
-              </button>
+              </div>
             ))
           )}
         </div>
@@ -251,9 +261,16 @@ export function Combobox({ id, options, value, onChange, placeholder, error, oth
 }
 
 /* ---------------------------------------------------------- choice cards */
-export function ChoiceGrid({ options, value, onChange, name }) {
+export function ChoiceGrid({ options, value, onChange, name, labelledBy, describedBy, invalid }) {
   return (
-    <div className="choice-grid" role="group" aria-label={name}>
+    <div
+      className="choice-grid"
+      role="group"
+      aria-label={labelledBy ? undefined : name}
+      aria-labelledby={labelledBy}
+      aria-describedby={describedBy}
+      data-invalid={invalid ? 'true' : undefined}
+    >
       {options.map((o) => (
         <button
           key={o.value}
@@ -594,11 +611,7 @@ export function WaveChart({ points, label = 'responses', peak }) {
               width={innerW / points.length}
               height={innerH}
               onMouseEnter={() => setActive(i)}
-              onFocus={() => setActive(i)}
-              onBlur={() => setActive(-1)}
-              tabIndex={0}
-              role="img"
-              aria-label={`${longDate(p[0])}: ${p[1]} ${label}`}
+              aria-hidden="true"
             />
           ))}
         </svg>
@@ -606,8 +619,10 @@ export function WaveChart({ points, label = 'responses', peak }) {
         {shown >= 0 ? (
           <div
             className="wave-tip"
-            style={{ left: `${(x(shown) / W) * 100}%` }}
-            role="status"
+            style={{
+              // clamped, so the bubble cannot hang off either end of the card
+              left: `${Math.min(Math.max((x(shown) / W) * 100, 12), 88)}%`,
+            }}
           >
             <b>{counts[shown]}</b> {counts[shown] === 1 ? label.replace(/s$/, '') : label}
             <span>{longDate(points[shown][0])}</span>
@@ -617,6 +632,9 @@ export function WaveChart({ points, label = 'responses', peak }) {
 
       <details className="chart-table">
         <summary>Show the daily figures</summary>
+        <p className="sr-only">
+          Every day with at least one response, with its exact figure.
+        </p>
         <table>
           <thead>
             <tr><th scope="col">Date</th><th scope="col">Responses</th></tr>

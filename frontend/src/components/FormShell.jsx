@@ -24,7 +24,7 @@ export function TopBar({ savedAt, subtitle }) {
 }
 
 export function ProgressTrack({ steps, current, furthest, onJump }) {
-  const pct = ((current - 1) / (steps.length - 1)) * 100
+  const pct = steps.length > 1 ? ((current - 1) / (steps.length - 1)) * 100 : 100
   return (
     <nav className="progress-track" aria-label="Form progress">
       <div className="fill-line" style={{ width: `${pct}%` }} />
@@ -33,6 +33,9 @@ export function ProgressTrack({ steps, current, furthest, onJump }) {
         const done = index < current
         const active = index === current
         const clickable = index <= furthest && !active
+        // aria-disabled rather than disabled: a disabled button leaves the tab
+        // order entirely, which took the current step — the one carrying
+        // aria-current — out of reach of a screen reader.
         return (
           <button
             key={label}
@@ -40,12 +43,15 @@ export function ProgressTrack({ steps, current, furthest, onJump }) {
             className={`p-step${done ? ' done' : ''}${active ? ' active' : ''}`}
             data-num={String(index).padStart(2, '0')}
             data-clickable={clickable}
-            disabled={!clickable}
+            aria-disabled={clickable ? undefined : 'true'}
             onClick={() => clickable && onJump(index)}
             aria-current={active ? 'step' : undefined}
           >
             <span className="p-dot" />
             <span className="p-label">{label}</span>
+            <span className="sr-only">
+              {active ? ' — current step' : done ? ' — completed' : ' — not reached yet'}
+            </span>
           </button>
         )
       })}
@@ -160,8 +166,15 @@ export function ReviewGrid({ rows, onEdit }) {
         <div className={`review-row${long ? ' is-long' : ''}`} key={key}>
           <div className="review-key">{key}</div>
           <div className="review-val">{value || '—'}</div>
-          <button type="button" className="review-edit" onClick={() => onEdit(step)}>
-            Edit Responses
+          {/* Every row had a button reading "Edit Responses", so a screen
+              reader announced ten identical controls. Name the answer. */}
+          <button
+            type="button"
+            className="review-edit"
+            onClick={() => onEdit(step)}
+            aria-label={`Edit ${key}`}
+          >
+            Edit
           </button>
         </div>
       ))}

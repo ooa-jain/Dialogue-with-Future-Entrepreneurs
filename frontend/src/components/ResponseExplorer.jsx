@@ -17,7 +17,15 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [confirmId, setConfirmId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
   const timer = useRef(null)
+  const confirmRef = useRef(null)
+
+  // Clicking Delete replaces that button with two new ones, which drops focus
+  // onto the body. Put it on the confirm button instead.
+  useEffect(() => {
+    if (confirmId && confirmRef.current) confirmRef.current.focus()
+  }, [confirmId])
 
   const scopes = view === 'faculty'
     ? [...SCOPES, { value: 'research', label: 'Has a research profile' }]
@@ -37,7 +45,12 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
     setDebounced('')
     setScope('')
     setPage(1)
+    setConfirmId(null)
   }, [view])
+
+  useEffect(() => {
+    setConfirmId(null)
+  }, [page, scope, debounced])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -58,6 +71,8 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
   }, [load])
 
   async function remove(id) {
+    if (deletingId) return
+    setDeletingId(id)
     try {
       await api.deleteResponse(id)
       setConfirmId(null)
@@ -66,6 +81,8 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
       onChanged?.()
     } catch (err) {
       onToast?.(err.message)
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -103,8 +120,25 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
 
       {error ? <Alert kind="error">{error}</Alert> : null}
 
+      <div className="sr-only" role="status" aria-live="polite">
+        {loading
+          ? 'Loading responses'
+          : data
+            ? `${data.filtered} response${data.filtered === 1 ? '' : 's'} match`
+            : ''}
+      </div>
+
+      {!data && loading ? (
+        <div className="response-list" aria-hidden="true">
+          {[0, 1, 2].map((i) => <div className="response-skeleton" key={i} />)}
+        </div>
+      ) : null}
+
       {data && data.items.length === 0 && !loading ? (
-        <Empty>No responses match the selected search/filter.</Empty>
+        <Empty>
+          No responses match this search or filter.
+          {query || scope ? ' Clear them to see every response.' : ''}
+        </Empty>
       ) : null}
 
       <div className="response-list">
@@ -144,16 +178,27 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
                   {confirmId === r.id ? (
                     <>
                       <button
-                        className="btn-line"
-                        style={{ borderColor: 'var(--error)', color: 'var(--error)' }}
+                        type="button" ref={confirmRef} className="btn-line btn-line-danger"
+                        disabled={deletingId === r.id}
                         onClick={() => remove(r.id)}
                       >
-                        Confirm delete
+                        {deletingId === r.id ? 'Deleting…' : 'Confirm delete'}
                       </button>
-                      <button className="btn-line" onClick={() => setConfirmId(null)}>Cancel</button>
+                      <button
+                        type="button" className="btn-line" disabled={deletingId === r.id}
+                        onClick={() => setConfirmId(null)}
+                      >
+                        Cancel
+                      </button>
                     </>
                   ) : (
-                    <button className="btn-line" onClick={() => setConfirmId(r.id)}>Delete</button>
+                    <button
+                      type="button" className="btn-line"
+                      onClick={() => setConfirmId(r.id)}
+                      aria-label={`Delete the response from ${r.name || 'this respondent'}`}
+                    >
+                      Delete
+                    </button>
                   )}
                 </div>
               </div>
@@ -203,11 +248,17 @@ export default function ResponseExplorer({ view, num = '07 · RESPONSES', onToas
 
       {pages > 1 ? (
         <div className="pager">
-          <button className="btn-line" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+          <button
+            type="button" className="btn-line" disabled={page <= 1 || loading}
+            onClick={() => setPage((p) => p - 1)}
+          >
             ← Previous
           </button>
-          <span>Page {page} of {pages}</span>
-          <button className="btn-line" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}>
+          <span aria-live="polite">Page {page} of {pages}</span>
+          <button
+            type="button" className="btn-line" disabled={page >= pages || loading}
+            onClick={() => setPage((p) => p + 1)}
+          >
             Next →
           </button>
         </div>

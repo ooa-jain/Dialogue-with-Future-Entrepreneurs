@@ -23,6 +23,12 @@ const INITIAL = {
   meeting_date: '', vision_self: '', vision_india: '',
 }
 
+const ENGAGEMENT_FIELDS = [
+  ['programme', 'Programme'],
+  ['semester', 'Semester'],
+  ['course_name', 'Course Name'],
+]
+
 const RESEARCH_FIELDS = [
   ['research_expertise', 'Research Expertise / Area of Specialisation',
     'Tell us about your primary areas of research expertise or academic specialisation…'],
@@ -48,17 +54,39 @@ const validators = {
   },
   2: (d) => {
     const e = {}
-    const incomplete = d.engagements.some(
-      (x) => required(x.programme) || required(x.semester) || required(x.course_name),
-    )
-    if (!d.engagements.length || incomplete) {
-      e.engagements = 'Please add at least one academic engagement and complete all three fields.'
+    if (!d.engagements.length) {
+      e.engagements = 'Please add at least one academic engagement.'
+    } else {
+      // Say which engagement and which field, rather than "complete all three".
+      const gaps = []
+      d.engagements.forEach((x, i) => {
+        const missing = ENGAGEMENT_FIELDS.filter(([key]) => required(x[key]))
+        missing.forEach(([key]) => { e[`eng-${key}-${i}`] = 'Required.' })
+        if (missing.length) {
+          gaps.push(`Academic Engagement ${String(i + 1).padStart(2, '0')} — ${
+            missing.map(([, label]) => label.toLowerCase()).join(', ')}`)
+        }
+      })
+      if (gaps.length) {
+        e.engagements = gaps.length === 1
+          ? `Please complete ${gaps[0]}.`
+          : `Please complete: ${gaps.join('; ')}.`
+      }
     }
     if (required(d.meeting_date)) e.meeting_date = 'Please choose the date of the meeting.'
     return e
   },
   3: (d) => (required(d.vision_self) ? { vision_self: 'Please share a few words on this before continuing.' } : {}),
   4: (d) => (required(d.vision_india) ? { vision_india: 'Please share a few words on this before continuing.' } : {}),
+}
+
+/** Patch one engagement row without rebuilding the handler three times over. */
+function setEngagement(w, index, item, patch) {
+  const next = [...w.data.engagements]
+  next[index] = { ...item, ...patch }
+  // The data key is `engagements`, but the error keys are per cell — clear the
+  // ones this edit answers, or the message would outlive the problem.
+  w.set({ engagements: next }, Object.keys(patch).map((k) => `eng-${k}-${index}`))
 }
 
 export default function FacultyForm() {
@@ -230,6 +258,7 @@ export default function FacultyForm() {
                       {w.data.engagements.length > 1 ? (
                         <button
                           type="button" className="engagement-remove"
+                          aria-label={`Remove Academic Engagement ${String(index + 1).padStart(2, '0')}`}
                           onClick={() =>
                             w.set({ engagements: w.data.engagements.filter((_, i) => i !== index) })
                           }
@@ -239,43 +268,40 @@ export default function FacultyForm() {
                       ) : null}
                     </div>
                     <div className="engagement-grid">
-                      <div>
-                        <label className="field-label" htmlFor={`f-eng-prog-${index}`}>Programme</label>
+                      <Field
+                        label="Programme" htmlFor={`f-eng-programme-${index}`}
+                        error={w.errors[`eng-programme-${index}`]}
+                      >
                         <TextInput
-                          id={`f-eng-prog-${index}`} placeholder="e.g. B.Com Finance"
-                          value={item.programme}
-                          onChange={(e) => {
-                            const next = [...w.data.engagements]
-                            next[index] = { ...item, programme: e.target.value }
-                            w.set({ engagements: next })
-                          }}
+                          id={`f-eng-programme-${index}`} placeholder="e.g. B.Com Finance"
+                          value={item.programme} error={w.errors[`eng-programme-${index}`]}
+                          onChange={(e) => setEngagement(w, index, item, { programme: e.target.value })}
                         />
-                      </div>
-                      <div>
-                        <label className="field-label" htmlFor={`f-eng-sem-${index}`}>Semester</label>
+                      </Field>
+                      <Field
+                        label="Semester" htmlFor={`f-eng-semester-${index}`}
+                        error={w.errors[`eng-semester-${index}`]}
+                      >
                         <Select
-                          id={`f-eng-sem-${index}`} value={item.semester}
-                          onChange={(e) => {
-                            const next = [...w.data.engagements]
-                            next[index] = { ...item, semester: e.target.value }
-                            w.set({ engagements: next })
-                          }}
+                          id={`f-eng-semester-${index}`} value={item.semester}
+                          error={w.errors[`eng-semester-${index}`]}
+                          onChange={(e) => setEngagement(w, index, item, { semester: e.target.value })}
                         >
                           <option value="">Select semester</option>
                           {(meta?.semesters || []).map((s) => <option key={s} value={s}>{s}</option>)}
                         </Select>
-                      </div>
-                      <div style={{ gridColumn: '1/-1' }}>
-                        <label className="field-label" htmlFor={`f-eng-course-${index}`}>Course Name</label>
-                        <TextInput
-                          id={`f-eng-course-${index}`} placeholder="e.g. Financial Accounting"
-                          value={item.course_name}
-                          onChange={(e) => {
-                            const next = [...w.data.engagements]
-                            next[index] = { ...item, course_name: e.target.value }
-                            w.set({ engagements: next })
-                          }}
-                        />
+                      </Field>
+                      <div className="engagement-wide">
+                        <Field
+                          label="Course Name" htmlFor={`f-eng-course_name-${index}`}
+                          error={w.errors[`eng-course_name-${index}`]}
+                        >
+                          <TextInput
+                            id={`f-eng-course_name-${index}`} placeholder="e.g. Financial Accounting"
+                            value={item.course_name} error={w.errors[`eng-course_name-${index}`]}
+                            onChange={(e) => setEngagement(w, index, item, { course_name: e.target.value })}
+                          />
+                        </Field>
                       </div>
                     </div>
                   </div>
@@ -292,7 +318,7 @@ export default function FacultyForm() {
               >
                 ＋ Add One More Academic Engagement
               </button>
-              <FieldError>{w.errors.engagements}</FieldError>
+              <FieldError id="engagements-error">{w.errors.engagements}</FieldError>
             </div>
 
             <Field label="Date of the meeting" htmlFor="f-meeting_date" error={w.errors.meeting_date}>
@@ -315,7 +341,7 @@ export default function FacultyForm() {
             <VisualFrame scene="horizon" caption="Beyond the roles we hold today lies the person we continue to become." />
 
             <div className="field-group" data-field="vision_self">
-              <div className="field-label">My vision for my future</div>
+              <label className="field-label" htmlFor="f-vision_self">My vision for my future</label>
               <Reflection
                 id="f-vision_self" value={w.data.vision_self} error={w.errors.vision_self}
                 onChange={(v) => w.set({ vision_self: v })}
@@ -336,7 +362,7 @@ export default function FacultyForm() {
             <VisualFrame scene="nation" caption="The nation our learners will help shape." />
 
             <div className="field-group" data-field="vision_india">
-              <div className="field-label">My vision for India&rsquo;s future</div>
+              <label className="field-label" htmlFor="f-vision_india">My vision for India&rsquo;s future</label>
               <Reflection
                 id="f-vision_india" value={w.data.vision_india} error={w.errors.vision_india}
                 onChange={(v) => w.set({ vision_india: v })}

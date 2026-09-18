@@ -50,11 +50,19 @@ export function useWizard({ draftKey, initial, validators, submit, stepCount }) 
 
   useUnloadGuard(dirty)
 
-  const set = useCallback((patch) => {
+  /**
+   * Apply a patch and clear the errors it answers.
+   *
+   * `alsoClear` exists for fields whose error key is not the data key — a row
+   * inside a repeating list patches `engagements` as a whole but should clear
+   * only the one cell the person just filled in.
+   */
+  const set = useCallback((patch, alsoClear = []) => {
     setData((d) => ({ ...d, ...patch }))
     setErrors((e) => {
       const next = { ...e }
       Object.keys(patch).forEach((k) => delete next[k])
+      alsoClear.forEach((k) => delete next[k])
       return next
     })
     setFormError('')
